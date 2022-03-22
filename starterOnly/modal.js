@@ -11,14 +11,28 @@ function editNav() {
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
+const closeModalBtn = document.querySelectorAll("#close-btn")
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
+
+//close modal event 
+
+closeModalBtn.forEach(btn => btn.addEventListener("click", closeModal))
+
 
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
 }
+
+// Close modal form 
+
+function closeModal(){
+  modalbg.style.display="none";
+}
+
+
 //////////////////////Form  //////////////////////////////////////////////////////////////////////////////////////////////
 
 // fetch html element from the DOM, fetch all the imputs, the radio btn, the form and the elements that we need to verify
@@ -33,7 +47,7 @@ let first, last, email, date, quantity, locations, termOfUse, nextEvenement;
 
 //// Fonction permettant d'afficher les messages d'erreurs lorsqu'un champ du formulaire est mal renseigné  
 
-///////// l'error contient le tag le message et un bolean valid ou non + il est add dans le span //////
+/////////  the error contain a tag, the message and a bolean + its add as textcontent in the span //////
 
 const errorDisplay = (tag, message, valid) => {
   const container = document.querySelector(".formData-" + tag);
@@ -56,6 +70,7 @@ const errorDisplay = (tag, message, valid) => {
 const firstChecker = (value) => {
 
   let prohibited = "!@#$%^&*()+=;:`~\|'?/.><, \"";
+  
 
   if (value.length < 2 ){
     errorDisplay(
@@ -114,9 +129,9 @@ const emailChecker = (value) => {
 };
 
 
-//Fonction permettant de vérifier le champ 'Date'
+//function that allow me to tcheck the  'Date'
 const dateChecker = (value) => {
-  // parses is a date string that returns the time +  pouvoir stocker les différentes dates des utilisateurs dans le même format
+  // parses is a date string that returns the time +   allows me to stock diff dates of users in the same format 
   const dateParser = (date) => {
     let newDate = new Date(date).toLocaleDateString("fr-FR", {
       year: "numeric",
@@ -140,7 +155,7 @@ const dateChecker = (value) => {
 };
 
 
-//Fonction permettant de vérifier le Nombre de tournois////////
+// function that allows me to check nb of tournement////////
 
 const quantityChecker = (value) => {
   if (value == "" || isNaN(value)) {
@@ -156,13 +171,12 @@ const quantityChecker = (value) => {
 };
 
 
-//Fonction permettant de vérifier Ville sélectionnée ///////
+//function that allows me to check the town ///////
 
 const radioChecker = () => {
   for (const radioButton of radio) {
     if (radioButton.checked) {
       locations = radioButton.value;
-      break;
     }
   }
   if (locations == null) {
@@ -171,8 +185,8 @@ const radioChecker = () => {
   }
 };
 
-// Fonction permettant de vérifier le champ si les checkbox "Condition d'utilisation"
-// ainsi que "Prochains tournois" sont coché ou non
+// function that allows me to check if the conditions checkbox is checked  
+// 
 
 const checkboxChecker = () => {
   if (!checkbox1.checked) {
@@ -193,3 +207,80 @@ const checkboxChecker = () => {
 };
 
 
+// CONFIRMATION PART 
+
+
+
+
+ // verification of diff inputs 
+
+inputs.forEach((inputs) => {
+  inputs.addEventListener("input", (i) => {
+    switch (i.target.id) {
+      case "first":
+        firstChecker(i.target.value);
+        break;
+      case "last":
+        lastChecker(i.target.value);
+        break;
+      case "email":
+        emailChecker(i.target.value);
+        break;
+      case "date":
+        dateChecker(i.target.value);
+        break;
+      case "quantity":
+        quantityChecker(i.target.value);
+        break;
+      default:
+        null;
+    }
+
+
+    
+  });
+});
+
+
+
+
+//  Event triggerd on the submit btn of the form 
+
+// display the error message when needed 
+
+// On click  on the submit btn , the form check data. if all inputs are true we send the confirmation message on a modal.
+// If not there is an error alert
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  radioChecker();
+  checkboxChecker();
+
+
+  if (first && last && email && date && quantity && locations && termOfUse) {
+    const data = {
+      first,
+      last,
+      email,
+      date,
+      quantity,
+      locations,
+      nextEvenement,
+    };
+
+    inputs.forEach((input) => (input.value = ""));
+    for (const radioButton of radio) {
+      radioButton.checked = false;
+    }
+    first = null;
+    last = null;
+    email = null;
+    date = null;
+    quantity = null;
+    locations = null;
+    nextEvenement = null;
+    modal.innerHTML = "<h3>Merci ! Votre réservation a été reçue.</h3>"
+  } else {
+    alert("Erreur d'inscription");
+  }
+});
