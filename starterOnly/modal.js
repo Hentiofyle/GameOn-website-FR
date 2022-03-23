@@ -69,7 +69,6 @@ const errorDisplay = (tag, message, valid) => {
 
 const firstChecker = (value) => {
 
-  let prohibited = "!@#$%^&*()+=;:`~\|'?/.><, \"";
   
 
   if (value.length < 2 ){
@@ -100,7 +99,7 @@ const lastChecker = (value) => {
   if (value.length < 2) {
     errorDisplay(
       "last",
-      "Veuillez entrer 2 caractères ou plus pour le champ du prénom."
+      "Veuillez entrer 2 caractères ou plus pour le champ du nom."
     );
     last = null;
   } else if (!value.match(/^[a-zA-Z0-9_.-]*$/)) {
